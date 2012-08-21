@@ -1,0 +1,19 @@
+<h2><%=t('.issue_importer')%></h2>
+
+<%= form_tag :action => 'import' do %>
+    <%= hidden_field_tag 'project_id', @project.id %>
+
+    <fieldset class="box"><legend><%= t('.credentials') %></legend>
+      <p><label><%= t('.login') %></label>
+        <%= text_field_tag :login %></p>
+
+      <p><label><%= t('.password') %></label>
+        <%= text_field_tag :password, nil, :type => :password %></p>
+
+      <p><label><%= t('.repo') %></label>
+        <%= text_field_tag :repo %></p>
+
+    </fieldset>
+
+    <%= submit_tag t('.button_import') %>
+<% end %>
