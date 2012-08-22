@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-module GithubImporter
+module Octomine
   class Dumper
     attr_accessor :client
     attr_accessor :issues

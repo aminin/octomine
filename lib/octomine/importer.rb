@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-module GithubImporter
+module Octomine
   class Importer
     def initialize logger
       @logger = logger

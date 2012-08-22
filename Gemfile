@@ -1,6 +1,4 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in github_importer.gemspec
-#gemspec
-
-gem 'octokit'
+# Specify your gem's dependencies in octomine.gemspec
+gemspec

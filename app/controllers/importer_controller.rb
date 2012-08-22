@@ -1,7 +1,4 @@
 # -*- encoding: utf-8 -*-
-require_relative '../../lib/github_importer'
-require 'hashie'
-
 class ImporterController < ApplicationController
   unloadable
   before_filter :find_project
@@ -24,7 +21,7 @@ class ImporterController < ApplicationController
       return
     end
 
-    importer = GithubImporter::Importer.new logger
+    importer = Octomine::Importer.new logger
     user_map = importer.import_users YAML.load(params[:user_map]), User.current, params[:create_missing_users]
 
     user_map.each do |k, v|
@@ -42,7 +39,7 @@ class ImporterController < ApplicationController
 
   def dump
     login, password, repo = params[:login], params[:password], params[:repo]
-    dumper = GithubImporter::Dumper.new login, password, repo
+    dumper = Octomine::Dumper.new login, password, repo
     logger.info "Dumper found #{dumper.issues.length} issues on GitHub repo #{repo}"
 
     github_dump = File.open(Rails.root.join('tmp/github_dump'), 'w')
