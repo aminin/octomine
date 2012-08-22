@@ -1,9 +1,10 @@
 <h2><%=t('.issue_importer')%></h2>
 
+<% unless @dumper && @dumper.respond_to?(:issues)  %>
 <%= form_tag :action => 'dump' do %>
     <%= hidden_field_tag 'project_id', @project.id %>
 
-    <fieldset class="box"><legend><%= t('.credentials') %></legend>
+    <fieldset class="box tabular"><legend><%= t('.credentials') %></legend>
       <p><label><%= t('.login') %></label>
         <%= text_field_tag :login %></p>
 
@@ -18,20 +19,19 @@
     <%= submit_tag t('.button_dump') %>
 <% end %>
 
-<% if @dumper && @dumper.respond_to?(:issues)  %>
-<div>
+<% else %>
+<div class="box tabular">
   <h3><%= t('.dump_info') %></h3>
   <dl>
     <dt><%= t('.issues_dumped') %></dt><dt><%= @dumper.issues.length %></dt>
     <dt><%= t('.users_dumped') %></dt><dt><%= @dumper.users.length %></dt>
   </dl>
 </div>
-<% end %>
 
 <%= form_tag :action => 'import' do %>
     <%= hidden_field_tag 'project_id', @project.id %>
 
-    <fieldset class="box"><legend><%= t('.preferences') %></legend>
+    <fieldset class="box tabular"><legend><%= t('.preferences') %></legend>
       <p><label><%= t('.create_missing_users') %></label>
         <%= check_box_tag :create_missing_users, '1', true %></p>
 
@@ -41,4 +41,6 @@
     </fieldset>
 
     <%= submit_tag t('.button_import') %>
+    <%= link_to t('.clear'), :action => 'clear' %>
+<% end %>
 <% end %>

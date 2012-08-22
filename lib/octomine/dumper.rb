@@ -1,8 +1,11 @@
 # -*- encoding : utf-8 -*-
+require 'octokit'
+
 module Octomine
   class Dumper
     attr_accessor :client
     attr_accessor :issues
+    attr_accessor :comments
 
     def initialize login, password, repo
       @repo = repo
@@ -31,8 +34,18 @@ module Octomine
       @users
     end
 
-    def issue_comments number
-      client.issue_commits(@repo, number)
+    def comments
+      return @comments if @comments
+      issues.each do |issue|
+        issue_comments issue
+      end
+      @comments
+    end
+
+    def issue_comments issue
+      return @comments[issue.number.to_s] if @comments && @comments[issue.number.to_s]
+      @comments ||= {}
+      @comments[issue.number.to_s] = issue.comments && issue.comments.to_i > 0 ? client.issue_comments(@repo, issue.number) : []
     end
   end
 end

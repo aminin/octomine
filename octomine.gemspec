@@ -5,8 +5,8 @@ Gem::Specification.new do |gem|
   gem.authors       = ["Anton Minin"]
   gem.email         = ["anton.a.minin@gmail.com"]
   gem.description   = %q{Redmine plugin for import issues from GitHub}
-  gem.summary       = %q{TODO: Write a gem summary}
-  gem.homepage      = ""
+  gem.summary       = %q{}
+  gem.homepage      = "https://github.com/aminin/octomine"
 
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }

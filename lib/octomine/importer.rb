@@ -25,9 +25,9 @@ module Octomine
       Hash[*user_map]
     end
 
-    def import_issues project_id, tracker_id, user_map, issues, closed_status_id = nil, open_status_id = nil
-      logger.debug "Number of issues to import is #{issues.length}"
-      issues.each do |gh_issue|
+    def import_issues project_id, tracker_id, user_map, dump, closed_status_id = nil, open_status_id = nil
+      logger.debug "Number of issues to import is #{dump.issues.length}"
+      dump.issues.each do |gh_issue|
         logger.debug "Importing issue #{gh_issue.number} #{gh_issue.title}"
         if gh_issue.pull_request && gh_issue.pull_request.empty? && gh_issue.pull_request.diff_url && !gh_issue.pull_request.diff_url.empty?
           logger.debug "Skipping pull request"
@@ -51,14 +51,31 @@ module Octomine
         rm_issue.status_id = open_status_id   if gh_issue.state == 'open'
         rm_issue.created_on = gh_issue.created_at
 
-        if rm_issue.save
-          logger.debug 'Issue successfully saved'
-        else
+        unless rm_issue.save
           logger.debug "Error ocured while saving issue #{rm_issue.errors.messages}"
+          next
         end
 
+        logger.debug 'Issue successfully saved'
+
         if gh_issue.comments && gh_issue.comments.to_i > 0
-          logger.warn 'TODO: import comments'
+          logger.debug 'Saving comments'
+          dump.issue_comments(gh_issue).each do |gh_comment|
+            user_id  = user_map[gh_comment.user.login].id
+            conditions = ['journalized_type = ? AND journalized_id = ? AND created_on = ? AND user_id = ?']
+            conditions.concat [:Issue, rm_issue.id, gh_comment.created_at, user_id]
+            rm_comment = Journal.first(:conditions => conditions) || Journal.new
+            rm_comment.journalized = rm_issue
+            rm_comment.user_id     = user_id
+            rm_comment.notes       = gh_comment.body
+            rm_comment.created_on  = gh_comment.created_at
+
+            unless rm_comment.save
+              logger.debug "Error ocured while saving issue #{rm_issue.errors.messages}"
+            else
+              logger.debug 'Comment successfully saved'
+            end
+          end
         end
       end
     end

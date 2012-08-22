@@ -2,6 +2,7 @@
 en:
   import_complete: "Import complete"
   dump_complete: "Dump complete"
+  dump_removed: "Dump removed"
   importer:
     complete: "Complete1"
     index:
@@ -12,6 +13,7 @@ en:
       repo: "Repo"
       button_import: "Import"
       button_dump: "Dump"
+      button_clear: "Clear"
       dump_info: "Dump Info"
       issues_dumped: "issues"
       users_dumped: "users"

@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+require 'hashie'
 class ImporterController < ApplicationController
   unloadable
   before_filter :find_project
@@ -31,7 +32,7 @@ class ImporterController < ApplicationController
     default_tracker_id = Tracker.first.id
     closed_status_id   = IssueStatus.find_by_is_closed(true).id
     open_status_id     = IssueStatus.find_by_is_default(true).id
-    importer.import_issues @project.id, default_tracker_id, user_map, dump.issues, closed_status_id, open_status_id
+    importer.import_issues @project.id, default_tracker_id, user_map, dump, closed_status_id, open_status_id
 
     flash[:notice] = t(:import_complete)
     redirect_to :controller => :importer, :action => :index
@@ -39,16 +40,29 @@ class ImporterController < ApplicationController
 
   def dump
     login, password, repo = params[:login], params[:password], params[:repo]
-    dumper = Octomine::Dumper.new login, password, repo
-    logger.info "Dumper found #{dumper.issues.length} issues on GitHub repo #{repo}"
 
-    github_dump = File.open(Rails.root.join('tmp/github_dump'), 'w')
-    github_dump.print(YAML.dump(dumper))
-    session[:github_dump] = github_dump.path
-    github_dump.flush
-    logger.info "#{File.size(session[:github_dump])} bytes written to #{session[:github_dump]}"
+    begin
+      dumper = Octomine::Dumper.new login, password, repo
+      logger.info "Dumper found #{dumper.issues.length} issues and #{dumper.comments.length} on the repo #{repo}"
+
+      github_dump = File.open(Rails.root.join('tmp/github_dump'), 'w')
+      github_dump.print(YAML.dump(dumper))
+      session[:github_dump] = github_dump.path
+      github_dump.flush
+      logger.info "#{File.size(session[:github_dump])} bytes written to #{session[:github_dump]}"
+    rescue => e
+      flash[:error] = "[#{e.class}] #{e.message}"
+    end
 
     flash[:notice] = t(:dump_complete)
+    redirect_to :controller => :importer, :action => :index
+  end
+
+  def clear
+    File.unlink(session[:github_dump]) if session[:github_dump] && File.exists?(session[:github_dump])
+    session[:github_dump] = nil
+
+    flash[:notice] = t(:dump_removed)
     redirect_to :controller => :importer, :action => :index
   end
 
