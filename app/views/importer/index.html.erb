@@ -1,6 +1,6 @@
 <h2><%=t('.issue_importer')%></h2>
 
-<%= form_tag :action => 'import' do %>
+<%= form_tag :action => 'dump' do %>
     <%= hidden_field_tag 'project_id', @project.id %>
 
     <fieldset class="box"><legend><%= t('.credentials') %></legend>
@@ -12,6 +12,31 @@
 
       <p><label><%= t('.repo') %></label>
         <%= text_field_tag :repo %></p>
+
+    </fieldset>
+
+    <%= submit_tag t('.button_dump') %>
+<% end %>
+
+<% if @dumper && @dumper.respond_to?(:issues)  %>
+<div>
+  <h3><%= t('.dump_info') %></h3>
+  <dl>
+    <dt><%= t('.issues_dumped') %></dt><dt><%= @dumper.issues.length %></dt>
+    <dt><%= t('.users_dumped') %></dt><dt><%= @dumper.users.length %></dt>
+  </dl>
+</div>
+<% end %>
+
+<%= form_tag :action => 'import' do %>
+    <%= hidden_field_tag 'project_id', @project.id %>
+
+    <fieldset class="box"><legend><%= t('.preferences') %></legend>
+      <p><label><%= t('.create_missing_users') %></label>
+        <%= check_box_tag :create_missing_users, '1', true %></p>
+
+      <p><label><%= t('.user_map') %></label>
+        <%= text_area_tag :user_map, @user_map.to_yaml %></p>
 
     </fieldset>
 

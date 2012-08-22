@@ -1,6 +1,7 @@
 # English strings go here for Rails i18n
 en:
   import_complete: "Import complete"
+  dump_complete: "Dump complete"
   importer:
     complete: "Complete1"
     index:
@@ -10,3 +11,7 @@ en:
       password: "Password"
       repo: "Repo"
       button_import: "Import"
+      button_dump: "Dump"
+      dump_info: "Dump Info"
+      issues_dumped: "issues"
+      users_dumped: "users"
