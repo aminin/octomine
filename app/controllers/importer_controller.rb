@@ -43,7 +43,7 @@ class ImporterController < ApplicationController
 
     begin
       dumper = Octomine::Dumper.new login, password, repo
-      logger.info "Dumper found #{dumper.issues.length} issues and #{dumper.comments.length} on the repo #{repo}"
+      logger.info "Dumper found #{dumper.issues.length} issues and #{dumper.comments.length} comments on the repo #{repo}"
 
       github_dump = File.open(Rails.root.join('tmp/github_dump'), 'w')
       github_dump.print(YAML.dump(dumper))
